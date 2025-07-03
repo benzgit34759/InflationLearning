@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เงินของคุณหายไปไหน? 💸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Reset & Box Sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Body & Base Typography */
+        body {
+            font-family: 'Sarabun', sans-serif; /* ใช้ Sarabun เพื่อความเข้ากันได้กับภาษาไทย */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6; /* เพิ่ม line-height เพื่อให้อ่านง่ายขึ้น */
+            font-size: 16px; /* กำหนด base font-size */
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem; /* ใช้ rem เพื่อความยืดหยุ่น */
+            min-height: 100vh;
+        }
+        
+        /* Media Query for Smaller Screens (Mobile) */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem; /* ลด padding สำหรับจอเล็กมาก */
+            }
+            body {
+                font-size: 14px; /* ลด font-size เล็กน้อยสำหรับมือถือ */
+            }
+        }
+        
+        /* Header Section */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2.5rem; /* ใช้ rem */
+            animation: fadeInDown 1s ease-out;
+            padding: 1rem 0; /* เพิ่ม padding */
+        }
+        
+        .header h1 {
+            font-size: 2.5em; /* ปรับขนาดให้เหมาะสมกับมือถือ */
+            margin-bottom: 0.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em; /* ปรับขนาด */
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em; /* เล็กลงอีกสำหรับมือถือ */
+            }
+            .header p {
+                font-size: 1em;
+            }
+        }
+        
+        /* Tab Container & Tabs */
+        .tab-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* ปรับ shadow เล็กน้อย */
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap; /* ให้ tabs ห่อขึ้นบรรทัดใหม่เมื่อจอเล็ก */
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab {
+            flex: 1 1 auto; /* ให้ tab ยืดหดได้และขึ้นบรรทัดใหม่ */
+            padding: 1rem 0.5rem; /* ปรับ padding สำหรับ touch target */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            min-width: 120px; /* กำหนด min-width เพื่อไม่ให้เล็กเกินไป */
+        }
+        
+        .tab.active {
+            background: white;
+            color: #2196F3;
+            border-bottom-color: #2196F3;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            padding: 1.5rem; /* ปรับ padding */
+            min-height: 500px; /* อาจปรับลดได้หากเนื้อหาสั้น */
+        }
+
+        @media (max-width: 768px) {
+            .tab-content {
+                padding: 1rem; /* ลด padding สำหรับมือถือ */
+            }
+        }
+        
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        /* Calculator Section */
+        .calculator-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #FF5722;
+        }
+        
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+            font-size: 1.1em; /* เพิ่มขนาด label */
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.8rem; /* ปรับ padding */
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none; /* สำหรับ iOS */
+            -moz-appearance: none; /* สำหรับ Firefox */
+            appearance: none; /* ซ่อนลูกศร default ของ select */
+            background-color: white;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #FF5722, #F44336);
+            color: white;
+            padding: 1rem 1.5rem; /* ปรับ padding */
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* เพิ่ม shadow */
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        /* Result Section */
+        .result-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        .shock-result {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #FF5722, #F44336);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .shock-result h3 {
+            font-size: 2em; /* ปรับขนาด */
+            margin-bottom: 0.5rem;
+        }
+        
+        .shock-result p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .shock-result h3 {
+                font-size: 1.8em;
+            }
+            .shock-result p {
+                font-size: 0.9em;
+            }
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* ปรับ minmax ให้เล็กกว่าเดิมเล็กน้อย */
+            gap: 1rem; /* ปรับ gap */
+            margin-top: 1rem;
+        }
+        
+        .comparison-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        
+        .comparison-card.before {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #E8F5E8, #F1F8E9);
+        }
+        
+        .comparison-card.after {
+            border-color: #F44336;
+            background: linear-gradient(135deg, #FFEBEE, #FCE4EC);
+        }
+        
+        .comparison-card h4 {
+            font-size: 1.1em;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+        
+        .big-number {
+            font-size: 2.2em; /* ปรับขนาด */
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .before .big-number {
+            color: #4CAF50;
+        }
+        
+        .after .big-number {
+            color: #F44336;
+        }
+        
+        /* Timeline Section */
+        .timeline-section {
+            margin-top: 2rem;
+        }
+        
+        .timeline-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #2196F3;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-year {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 0.8rem;
+        }
+        
+        .timeline-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ปรับ minmax ให้เล็กลงสำหรับมือถือ */
+            gap: 0.8rem; /* ปรับ gap */
+        }
+        
+        .data-point {
+            text-align: center;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .data-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .data-value {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* Bitcoin Section */
+        .bitcoin-section {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .bitcoin-section h3 {
+            font-size: 1.8em;
+            margin-bottom: 1rem;
+        }
+        
+        .bitcoin-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* ปรับ minmax ให้เล็กลง */
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .bitcoin-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(5px); /* ลด blur เล็กน้อย */
+        }
+        
+        .bitcoin-card h4 {
+            margin-bottom: 0.8rem;
+            font-size: 1em;
+        }
+        
+        .bitcoin-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .cta-btn {
+            background: white;
+            color: #4CAF50;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            background: #FFF3CD;
+            border: 1px solid #FFEAA7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.2rem 0;
+            border-left: 5px solid #FFB347;
+            font-size: 0.95em;
+        }
+        
+        .alert-box strong {
+            color: #856404;
+        }
+
+        /* Footer */
+        footer {
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 เรียนรู้เงินเฟ้อ</h1>
+            <p>เครื่องมือศึกษาเพื่อทำความเข้าใจการเสื่อมค่าของเงิน</p>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(event, 'purchasing-power')">💰 อำนาจซื้อ</div>
+                <div class="tab" onclick="switchTab(event, 'historical')">📊 เปรียบเทียบยุค</div>
+                <div class="tab" onclick="switchTab(event, 'protection')">🛡️ ทางป้องกัน</div>
+            </div>
+            
+            <div class="tab-content">
+                <!-- Purchasing Power Calculator -->
+                <div id="purchasing-power" class="tab-pane active">
+                    <div class="alert-box" style="background: #fff3cd; border-color: #ffeaa7; border-left-color: #f39c12; margin-bottom: 20px;">
+                        <strong>⚠️ ข้อสำคัญ:</strong> 
+                        เครื่องมือนี้เพื่อการศึกษาและทำความเข้าใจเรื่องเงินเฟ้อเท่านั้น 
+                        ไม่ใช่คำแนะนำการลงทุน ผลการคำนวณเป็นการประมาณจากข้อมูลในอดีต
+                    </div>
+                    
+                    <h2>💰 คำนวณอำนาจซื้อจริงของเงินคุณ + จำนวนปีที่ต้องทำงานซื้อบ้าน</h2>
+                    
+                    <div class="calculator-section">
+                        <h3>🧮 เครื่องคำนวณอำนาจซื้อ</h3>
+                        <div class="input-group">
+                            <label>เงินเดือนปัจจุบัน (บาท)</label>
+                            <input type="number" id="currentSalary" placeholder="เช่น 18000" value="18000">
+                        </div>
+                        <div class="input-group">
+                            <label>เปรียบเทียบกับปี</label>
+                            <select id="compareYear">
+                                <option value="2000">พ.ศ. 2543 (ค.ศ. 2000)</option>
+                                <option value="2005">พ.ศ. 2548 (ค.ศ. 2005)</option>
+                                <option value="2010">พ.ศ. 2553 (ค.ศ. 2010)</option>
+                                <option value="2015" selected>พ.ศ. 2558 (ค.ศ. 2015)</option>
+                                <option value="2020">พ.ศ. 2563 (ค.ศ. 2020)</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculatePurchasingPower()">
+                            คำนวณความจริงที่น่าตกใจ! 😱
+                        </button>
+                    </div>
+                    
+                    <div id="purchasingPowerResult" class="result-section">
+                        <div class="shock-result">
+                            <h3 id="lossPercentage">-57%</h3>
+                            <p>อำนาจซื้อของเงินคุณลดลงแล้ว!</p>
+                        </div>
+                        
+                        <div class="comparison-grid">
+                            <div class="comparison-card before">
+                                <h4>🥇 ทองคำที่ซื้อได้ในอดีต</h4>
+                                <div class="big-number" id="oldGoldBuyingPower">0.9</div>
+                                <p>บาททอง (เทียบราคาทองคำ)</p>
+                            </div>
+                            <div class="comparison-card after">
+                                <h4>🥇 ทองคำที่ซื้อได้ตอนนี้</h4>
+                                <div class="big-number" id="newGoldBuyingPower">0.4</div>
+                                <p>บาททอง (เทียบราคาทองคำ)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-grid" style="margin-top: 1rem;">
+                            <div class="comparison-card before">
+                                <h4>🏠 ปีที่ต้องทำงานซื้อบ้าน (อดีต)</h4>
+                                <div class="big-number" id="oldWorkYears">11.1</div>
+                                <p>ปี (บ้านต่างจังหวัด)</p>
+                            </div>
+                            <div class="comparison-card after">
+                                <h4>🏠 ปีที่ต้องทำงานซื้อบ้าน (ปัจจุบัน)</h4>
+                                <div class="big-number" id="newWorkYears">11.6</div>
+                                <p>ปี (บ้านต่างจังหวัด)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-box">
+                            <strong>💡 หมายความว่า:</strong> เงินปัจจุบันของคุณ <span id="currentSalaryDisplay">18,000</span> บาท 
+                            เทียบเท่าเงิน <span id="equivalentSalary">8,600</span> บาท ในปี <span id="selectedYear">2015</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Historical Comparison -->
+                <div id="historical" class="tab-pane">
+                    <div class="alert-box" style="background: #fff3cd; border-color: #ffeaa7; border-left-color: #f39c12; margin-bottom: 20px;">
+                        <strong>⚠️ ข้อสำคัญ:</strong> 
+                        ข้อมูลเหล่านี้เป็นการประมาณและรวบรวมจากแหล่งต่างๆ เพื่อการศึกษาเท่านั้น 
+                        อาจมีความแตกต่างจากความเป็นจริงในแต่ละพื้นที่
+                    </div>
+                    
+                    <h2>📊 เปรียบเทียบข้ามยุค: ทำไมคนรุ่นก่อนซื้อบ้านง่ายกว่า?</h2>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-item">
+                            <div class="timeline-year">📅 ปี 2000 (พ.ศ. 2543)</div>
+                            <div class="timeline-data">
+                                <div class="data-point">
+                                    <div class="data-label">เงินเดือนเฉลี่ย</div>
+                                    <div class="data-value">8,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">ราคาทองคำ</div>
+                                    <div class="data-value">6,500 บาท/บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">บ้านเฉลี่ย ต่างจังหวัด</div>
+                                    <div class="data-value">500,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">อัตราส่วนบ้าน:เงินเดือน</div>
+                                    <div class="data-value">63 เดือน</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">📅 ปี 2010 (พ.ศ. 2553)</div>
+                            <div class="timeline-data">
+                                <div class="data-point">
+                                    <div class="data-label">เงินเดือนเฉลี่ย</div>
+                                    <div class="data-value">15,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">ราคาทองคำ</div>
+                                    <div class="data-value">18,500 บาท/บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">บ้านเฉลี่ย ต่างจังหวัด</div>
+                                    <div class="data-value">1,500,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">อัตราส่วนบ้าน:เงินเดือน</div>
+                                    <div class="data-value">100 เดือน</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">📅 ปี 2025 (พ.ศ. 2568) - วันนี้!</div>
+                            <div class="timeline-data">
+                                <div class="data-point">
+                                    <div class="data-label">เงินเดือนเฉลี่ย</div>
+                                    <div class="data-value">18,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">ราคาทองคำ</div>
+                                    <div class="data-value">51,200 บาท/บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">บ้านเฉลี่ย ต่างจังหวัด</div>
+                                    <div class="data-value">2,500,000 บาท</div>
+                                </div>
+                                <div class="data-point">
+                                    <div class="data-label">อัตราส่วนบ้าน:เงินเดือน</div>
+                                    <div class="data-value">116 เดือน</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="shock-result">
+                        <h3>🏠 การซื้อบ้านยากขึ้น 1.8 เท่า!</h3>
+                        <p>ในปี 2000 ต้องทำงาน 5.2 ปี ซื้อบ้านได้<br>
+                        ปี 2025 ต้องทำงาน 9.7 ปี!</p>
+                    </div>
+                    
+                    <div class="alert-box">
+                        <strong>🔍 สาเหตุหลัก:</strong> 
+                        การพิมพ์เงินเพิ่มขึ้นอย่างมหาศาล ทำให้ราคาสินทรัพย์พุ่งสูงขึ้น 
+                        แต่เงินเดือนปรับตัวช้ากว่า
+                        <br><br>
+                        <strong>📊 ข้อมูลล่าสุด 3 ก.ค. 2568:</strong><br>
+                        • ราคาทองคำ: 51,200 บาท/บาท<br>
+                        • เงินเดือนข้าราชการใหม่ ป.ตรี: 18,000 บาท<br>
+                        • บ้านเฉลี่ย ต่างจังหวัด: 1.2-3 ล้านบาท (เฉลี่ย ~2.5 ล้าน)
+                    </div>
+                </div>
+                
+                <!-- Protection Methods -->
+                <div id="protection" class="tab-pane">
+                    <h2>🛡️ ทางเลือกในการป้องกันเงินเฟ้อ</h2>
+                    
+                    <div class="alert-box" style="background: #fff3cd; border-color: #ffeaa7; border-left-color: #f39c12;">
+                        <strong>⚠️ ข้อสำคัญ:</strong> 
+                        ข้อมูลนี้เพื่อการศึกษาเท่านั้น ไม่ใช่คำแนะนำการลงทุน 
+                        ควรปรึกษาที่ปรึกษาการลงทุนที่มีใบอนุญาตก่อนตัดสินใจลงทุน
+                    </div>
+                    
+                    <div class="timeline-section">
+                        <h3>💡 ทางเลือกหลากหลายในการรักษาอำนาจซื้อ</h3>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">🥇 ทองคำ</div>
+                            <div style="line-height: 1.6; font-size: 0.95em;">
+                                <strong>ข้อดี:</strong> เก็บมูลค่าได้ดีในระยะยาว, เป็นที่ยอมรับทั่วโลก, ไม่มีความเสี่ยงจากการล้มละลาย<br>
+                                <strong>ข้อเสีย:</strong> ไม่ให้ผลตอบแทนดอกเบี้ย, ค่าเก็บรักษา, ความผันผวนในระยะสั้น<br>
+                                <strong>เหมาะกับ:</strong> ผู้ที่ต้องการรักษาเงินทุนและป้องกันเงินเฟ้อ
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">🏢 หุ้นธุรกิจคุณภาพ</div>
+                            <div style="line-height: 1.6; font-size: 0.95em;">
+                                <strong>ข้อดี:</strong> เติบโตตามเศรษฐกิจ, ได้ปันผล, สภาพคล่องดี<br>
+                                <strong>ข้อเสีย:</strong> ความเสี่ยงสูง, ต้องมีความรู้, ความผันผวน<br>
+                                <strong>เหมาะกับ:</strong> ผู้ที่มีความรู้และยอมรับความเสี่ยงได้
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">🏠 อสังหาริมทรัพย์</div>
+                            <div style="line-height: 1.6; font-size: 0.95em;">
+                                <strong>ข้อดี:</strong> สินทรัพย์จับต้องได้, ให้ผลตอบแทนจากค่าเช่า, มูลค่าเพิ่มตามเงินเฟ้อ<br>
+                                <strong>ข้อเสีย:</strong> ต้องใช้เงินทุนมาก, สภาพคล่องต่ำ, ค่าใช้จ่ายในการดูแล<br>
+                                <strong>เหมาะกับ:</strong> ผู้ที่มีเงินทุนมากและต้องการรายได้จากค่าเช่า
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">📊 กองทุนรวม</div>
+                            <div style="line-height: 1.6; font-size: 0.95em;">
+                                <strong>ข้อดี:</strong> บริหารโดยผู้เชี่ยวชาญ, กระจายความเสี่ยง, เข้าถึงง่าย<br>
+                                <strong>ข้อเสีย:</strong> ค่าธรรมเนียม, ไม่ได้ควบคุมการลงทุนเอง<br>
+                                <strong>เหมาะกับ:</strong> ผู้เริ่มต้นหรือไม่มีเวลาดูแลการลงทุน
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">₿ สินทรัพย์ดิจิทัล</div>
+                            <div style="line-height: 1.6; font-size: 0.95em;">
+                                <strong>ข้อดี:</strong> ศักยภาพผลตอบแทนสูง, เทคโนโลยีใหม่, การเข้าถึงทั่วโลก<br>
+                                <strong>ข้อเสีย:</strong> ความผันผวนสูงมาก, กฎหมายยังไม่ชัดเจน, ความเสี่ยงด้านเทคโนโลยี<br>
+                                <strong>เหมาะกับ:</strong> ผู้ที่เข้าใจเทคโนโลยีและยอมรับความเสี่ยงสูงได้
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bitcoin-section" style="background: linear-gradient(135deg, #2E8B57, #228B22);">
+                        <h3>📈 การกระจายความเสี่ยง (Diversification)</h3>
+                        <p style="font-size: 1.1em;">วิธีที่ดีที่สุดคือ <strong>ไม่ใส่ไข่ไว้ในตะกร้าใบเดียว</strong></p>
+                        
+                        <div class="bitcoin-comparison">
+                            <div class="bitcoin-card">
+                                <h4>🥉 ระดับอนุรักษ์</h4>
+                                <div style="font-size: 1em; margin: 0.5rem 0;">
+                                    • เงินฝาก/พันธบัตร 30%<br>
+                                    • ทองคำ 40%<br>
+                                    • กองทุนรวม 30%
+                                </div>
+                            </div>
+                            <div class="bitcoin-card">
+                                <h4>🥈 ระดับปานกลาง</h4>
+                                <div style="font-size: 1em; margin: 0.5rem 0;">
+                                    • เงินฝาก 20%<br>
+                                    • ทองคำ 30%<br>
+                                    • หุ้น/กองทุน 40%<br>
+                                    • อสังหาฯ 10%
+                                </div>
+                            </div>
+                            <div class="bitcoin-card">
+                                <h4>🥇 ระดับรุกราน</h4>
+                                <div style="font-size: 1em; margin: 0.5rem 0;">
+                                    • เงินฝาก 10%<br>
+                                    • หุ้น 50%<br>
+                                    • ทองคำ 20%<br>
+                                    • อสังหาฯ 15%<br>
+                                    • สินทรัพย์ดิจิทัล 5%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.2rem; font-size: 0.9em; opacity: 0.9;">
+                            <strong>หลักการสำคัญ:</strong> เริ่มจากความเสี่ยงต่ำ ค่อยๆ เพิ่มความเสี่ยงตามความรู้และประสบการณ์
+                        </div>
+                    </div>
+                    
+                    <div class="cta-section">
+                        <h3>📚 เรียนรู้เพิ่มเติม</h3>
+                        <p>ศึกษาข้อมูลเพิ่มเติมก่อนการลงทุนทุกครั้ง</p>
+                        <div style="text-align: left; max-width: 600px; margin: 0 auto; font-size: 0.95em;">
+                            <h4>แหล่งข้อมูลที่น่าเชื่อถือ:</h4>
+                            • สำนักงาน ก.ล.ต. (sec.or.th)<br>
+                            • ธนาคารแห่งประเทศไทย (bot.or.th)<br>
+                            • สมาคมการลงทุน<br>
+                            • ที่ปรึกษาการลงทุนที่มีใบอนุญาต
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 1.2rem; text-align: center; border-top: 1px solid #ddd; margin-top: 1.5rem; border-radius: 15px;">
+            <p style="margin: 0; color: #666; font-size: 0.85em;">
+                <strong>⚠️ ข้อสำคัญ:</strong> เครื่องมือนี้พัฒนาขึ้นเพื่อการศึกษาเท่านั้น ไม่ใช่คำแนะนำการลงทุน<br>
+                ข้อมูลอาจมีความคลาดเคลื่อนจากความเป็นจริง กรุณาศึกษาข้อมูลเพิ่มเติมจากแหล่งที่น่าเชื่อถือ<br>
+                และปรึกษาที่ปรึกษาการลงทุนที่มีใบอนุญาตก่อนการตัดสินใจลงทุน
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Historical inflation data (simplified for demo)
+        const historicalData = {
+            2000: { goldPrice: 6500, avgSalary: 8000, housePrice: 500000, inflationIndex: 100 },
+            2005: { goldPrice: 9200, avgSalary: 10500, housePrice: 800000, inflationIndex: 125 },
+            2010: { goldPrice: 18500, avgSalary: 15000, housePrice: 1500000, inflationIndex: 180 },
+            2015: { goldPrice: 20000, avgSalary: 20000, housePrice: 2000000, inflationIndex: 200 },
+            2020: { goldPrice: 28000, avgSalary: 23000, housePrice: 2200000, inflationIndex: 240 },
+            2025: { goldPrice: 51200, avgSalary: 18000, housePrice: 2500000, inflationIndex: 420 }
+        };
+
+        function switchTab(event, tabId) { // เพิ่ม event parameter
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab pane
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function calculatePurchasingPower() {
+            const currentSalary = parseFloat(document.getElementById('currentSalary').value);
+            const compareYear = parseInt(document.getElementById('compareYear').value);
+            
+            if (isNaN(currentSalary) || currentSalary <= 0) {
+                // แทนที่ alert ด้วยการแสดงข้อความใน UI
+                const resultSection = document.getElementById('purchasingPowerResult');
+                resultSection.innerHTML = `
+                    <div class="alert-box" style="background: #f8d7da; border-color: #f5c6cb; border-left-color: #dc3545; color: #721c24;">
+                        <strong>ข้อผิดพลาด:</strong> กรุณาใส่เงินเดือนให้ถูกต้องและเป็นตัวเลขบวก
+                    </div>
+                `;
+                resultSection.classList.add('show');
+                resultSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                return;
+            }
+            
+            const currentData = historicalData[2025];
+            const pastData = historicalData[compareYear];
+
+            if (!pastData) {
+                const resultSection = document.getElementById('purchasingPowerResult');
+                resultSection.innerHTML = `
+                    <div class="alert-box" style="background: #f8d7da; border-color: #f5c6cb; border-left-color: #dc3545; color: #721c24;">
+                        <strong>ข้อผิดพลาด:</strong> ไม่พบข้อมูลสำหรับปีที่เลือก (${compareYear})
+                    </div>
+                `;
+                resultSection.classList.add('show');
+                resultSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                return;
+            }
+            
+            // Calculate purchasing power based on gold
+            const currentGoldBuyingPower = currentSalary / currentData.goldPrice;
+            const pastGoldBuyingPower = currentData.avgSalary / pastData.goldPrice; // ใช้เงินเดือนเฉลี่ยของปีปัจจุบันเทียบกับราคาทองในอดีต
+            
+            // Calculate equivalent salary
+            const equivalentSalary = Math.round((currentSalary * pastData.inflationIndex) / currentData.inflationIndex);
+            
+            // Calculate loss percentage (เทียบจากดัชนีเงินเฟ้อ)
+            const lossPercentage = Math.round(((currentData.inflationIndex - pastData.inflationIndex) / currentData.inflationIndex) * 100);
+            
+            // Calculate years needed to buy a house (assuming 20% down payment)
+            const downPaymentRatio = 0.20;
+            const currentWorkYears = (currentData.housePrice * downPaymentRatio) / (currentSalary * 12);
+            const pastWorkYears = (pastData.housePrice * downPaymentRatio) / (pastData.avgSalary * 12); // ใช้เงินเดือนเฉลี่ยของปีนั้นๆ
+
+            // Update UI - Reconstruct the result section HTML
+            const resultHtml = `
+                <div class="shock-result">
+                    <h3 id="lossPercentage">-${Math.abs(lossPercentage)}%</h3>
+                    <p>อำนาจซื้อของเงินคุณลดลงแล้ว!</p>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-card before">
+                        <h4>🥇 ทองคำที่ซื้อได้ในอดีต (เทียบจากเงินเดือนเฉลี่ยปี ${compareYear})</h4>
+                        <div class="big-number" id="oldGoldBuyingPower">${pastGoldBuyingPower.toFixed(1)}</div>
+                        <p>บาททอง</p>
+                    </div>
+                    <div class="comparison-card after">
+                        <h4>🥇 ทองคำที่ซื้อได้ตอนนี้ (เทียบจากเงินเดือนปัจจุบันของคุณ)</h4>
+                        <div class="big-number" id="newGoldBuyingPower">${currentGoldBuyingPower.toFixed(1)}</div>
+                        <p>บาททอง</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-grid" style="margin-top: 1rem;">
+                    <div class="comparison-card before">
+                        <h4>🏠 ปีที่ต้องทำงานซื้อบ้าน (อดีต - เงินเดือนเฉลี่ยปี ${compareYear})</h4>
+                        <div class="big-number" id="oldWorkYears">${pastWorkYears.toFixed(1)}</div>
+                        <p>ปี (ดาวน์ 20%)</p>
+                    </div>
+                    <div class="comparison-card after">
+                        <h4>🏠 ปีที่ต้องทำงานซื้อบ้าน (ปัจจุบัน - เงินเดือนของคุณ)</h4>
+                        <div class="big-number" id="newWorkYears">${currentWorkYears.toFixed(1)}</div>
+                        <p>ปี (ดาวน์ 20%)</p>
+                    </div>
+                </div>
+                
+                <div class="alert-box">
+                    <strong>💡 หมายความว่า:</strong> เงินปัจจุบันของคุณ <span id="currentSalaryDisplay">${currentSalary.toLocaleString()}</span> บาท 
+                    เทียบเท่าเงิน <span id="equivalentSalary">${equivalentSalary.toLocaleString()}</span> บาท ในปี <span id="selectedYear">${compareYear}</span>
+                </div>
+            `;
+            document.getElementById('purchasingPowerResult').innerHTML = resultHtml;
+            document.getElementById('purchasingPowerResult').classList.add('show');
+            
+            // Scroll to result
+            document.getElementById('purchasingPowerResult').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        // Function to replace alert with custom modal or message box
+        function showCustomMessage(title, message) {
+            // Create a simple modal div
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.3s ease-in-out;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                text-align: center;
+                max-width: 90%;
+                width: 400px;
+                transform: translateY(-20px);
+                transition: transform 0.3s ease-in-out;
+            `;
+
+            const modalTitle = document.createElement('h3');
+            modalTitle.textContent = title;
+            modalTitle.style.cssText = `
+                color: #333;
+                margin-bottom: 15px;
+                font-size: 1.5em;
+            `;
+
+            const modalMessage = document.createElement('p');
+            modalMessage.textContent = message;
+            modalMessage.style.cssText = `
+                color: #555;
+                margin-bottom: 25px;
+                line-height: 1.5;
+            `;
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'ปิด';
+            closeButton.style.cssText = `
+                background: #2196F3;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 1em;
+                transition: background 0.2s ease;
+            `;
+            closeButton.onmouseover = () => closeButton.style.background = '#1976D2';
+            closeButton.onmouseout = () => closeButton.style.background = '#2196F3';
+            closeButton.onclick = () => {
+                modal.style.opacity = 0;
+                modalContent.style.transform = 'translateY(-20px)';
+                setTimeout(() => document.body.removeChild(modal), 300);
+            };
+
+            modalContent.appendChild(modalTitle);
+            modalContent.appendChild(modalMessage);
+            modalContent.appendChild(closeButton);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Animate in
+            setTimeout(() => {
+                modal.style.opacity = 1;
+                modalContent.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        // Replace alert calls with custom message box
+        function showBitcoinGuide() {
+            showCustomMessage('🚀 คู่มือเริ่มต้น Bitcoin', '1. เรียนรู้พื้นฐาน Bitcoin\n2. เลือก Exchange ที่น่าเชื่อถือ\n3. เริ่มต้นด้วยจำนวนเล็กๆ\n4. DCA (Dollar Cost Averaging)\n5. Self-custody สำหรับจำนวนมาก\n\n(ในเวอร์ชั่นจริงจะมี guide ละเอียด)');
+        }
+
+        function showDCAStrategy() {
+            showCustomMessage('💡 กลยุทธ์ DCA Bitcoin', '• ซื้อจำนวนคงที่ทุกเดือน\n• ไม่ต้องเดาจังหวะตลาด\n• ลดความเสี่ยงจากความผันผวน\n• เหมาะกับการออมระยะยาว\n• เริ่มต้นได้ตั้งแต่ 1,000 บาท/เดือน\n\n(ในเวอร์ชั่นจริงจะมี calculator DCA)');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-calculate with default values
+            setTimeout(() => {
+                calculatePurchasingPower();
+            }, 100); // ลด delay ลง
+        });
+    </script>
+</body>
+</html>
